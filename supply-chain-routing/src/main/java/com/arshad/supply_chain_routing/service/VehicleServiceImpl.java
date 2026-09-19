@@ -33,7 +33,7 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public Vehicle updateVehicle(Long id , Vehicle vehicle) {
-        Vehicle existing = getVehicleById(vehicle.getId());
+        Vehicle existing = getVehicleById(id);
 
         existing.setVehicleNo(vehicle.getVehicleNo());
         existing.setCapacity(vehicle.getCapacity());
