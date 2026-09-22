@@ -1,5 +1,6 @@
 package com.arshad.supply_chain_routing.controller;
 
+import com.arshad.supply_chain_routing.dto.RouteResponse;
 import com.arshad.supply_chain_routing.graph.Graph;
 import com.arshad.supply_chain_routing.graph.GraphBuilder;
 import com.arshad.supply_chain_routing.graph.GraphEdge;
@@ -28,7 +29,7 @@ public class GraphController {
     }
 
     @GetMapping("/shortest-path")
-    public Map<String , Object> shortestPath(@RequestParam Long source , @RequestParam Long destination){
+    public RouteResponse shortestPath(@RequestParam Long source , @RequestParam Long destination){
         return dijkstraService.findShortestPath(source,destination);
     }
 }

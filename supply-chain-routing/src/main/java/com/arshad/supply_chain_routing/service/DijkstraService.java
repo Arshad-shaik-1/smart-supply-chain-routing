@@ -1,5 +1,6 @@
 package com.arshad.supply_chain_routing.service;
 
+import com.arshad.supply_chain_routing.dto.RouteResponse;
 import com.arshad.supply_chain_routing.graph.Graph;
 import com.arshad.supply_chain_routing.graph.GraphBuilder;
 import com.arshad.supply_chain_routing.graph.GraphEdge;
@@ -15,7 +16,7 @@ public class DijkstraService {
         this.graphBuilder = graphBuilder;
     }
 
-    public Map<String , Object> findShortestPath(Long source , Long destination){
+    public RouteResponse findShortestPath(Long source , Long destination){
         Graph g = graphBuilder.buildGraph();
 
         Map<Long , Double> distances = new HashMap<>();
@@ -49,14 +50,22 @@ public class DijkstraService {
 
         List<Long> path = buildPath(previous , source , destination);
 
-        Map<String , Object> result = new LinkedHashMap<>();
-        result.put("Source" , source);
-        result.put("Destination" , destination);
-        result.put("Distance" , distances.getOrDefault(
-                destination , Double.POSITIVE_INFINITY
-        ));
-        result.put("Path" , path);
-        return result;
+//        Map<String , Object> result = new LinkedHashMap<>();
+//        result.put("Source" , source);
+//        result.put("Destination" , destination);
+//        result.put("Distance" , distances.getOrDefault(
+//                destination , Double.POSITIVE_INFINITY
+//        ));
+//        result.put("Path" , path);
+
+        return new RouteResponse(
+                source ,
+                destination ,
+                distances.getOrDefault(
+                        destination , Double.POSITIVE_INFINITY
+                ),
+                path
+        );
 
 
     }
