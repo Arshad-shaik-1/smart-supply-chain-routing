@@ -54,7 +54,10 @@ public class DijkstraService {
 //                destination , Double.POSITIVE_INFINITY
 //        ));
 //        result.put("Path" , path);
-
+        if(path.isEmpty()){
+            throw new IllegalArgumentException("No route exists from location " + source +
+                    " to destination " + destination);
+        }
         return new RouteResponse(
                 source ,
                 destination ,

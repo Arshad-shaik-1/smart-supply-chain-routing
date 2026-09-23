@@ -31,6 +31,22 @@ public class MultiDeliveryRouteServiceImpl implements MultiDeliveryRouteService 
         Vehicle vehicle = vehicleRepository.findById(request.getVehicleId())
                 .orElseThrow(() -> new RuntimeException("Vehicle Not Found"));
 
+        double totalWeight = 0.0;
+
+        for(Long deliveryId : request.getDeliveryIds()){
+            Delivery delivery = deliveryRepository.findById(deliveryId).orElseThrow(() -> new RuntimeException("Delivery Not Found"));
+            totalWeight += delivery.getWeight();
+        }
+        if(totalWeight >= vehicle.getCapacity()){
+            throw new IllegalArgumentException(
+                    "Vehicle Capacity Exceeded. vehicle capacity is : "
+                    +vehicle.getCapacity()
+                    + ", required capacity : "
+                    +totalWeight
+
+            );
+        }
+
         Long currentLocationId = vehicle.getCurrentLocation().getId();
 
         List<RouteResponse> routes = new ArrayList<>();
