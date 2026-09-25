@@ -3,7 +3,9 @@ package com.arshad.supply_chain_routing.service;
 import com.arshad.supply_chain_routing.dto.DeliveryAssignmentResponse;
 import com.arshad.supply_chain_routing.dto.RouteResponse;
 import com.arshad.supply_chain_routing.entity.Delivery;
+import com.arshad.supply_chain_routing.entity.DeliveryStatus;
 import com.arshad.supply_chain_routing.entity.Vehicle;
+import com.arshad.supply_chain_routing.entity.VehicleStatus;
 import com.arshad.supply_chain_routing.graph.DijkstraService;
 import com.arshad.supply_chain_routing.repository.DeliveryRepository;
 import com.arshad.supply_chain_routing.repository.VehicleRepository;
@@ -38,7 +40,7 @@ public class DeliveryAssignmentServiceImpl implements DeliveryAssignmentService{
         double shortestDistance = Double.POSITIVE_INFINITY;
 
         for(Vehicle v : vehicles){
-            if(v.getStatus() != com.arshad.supply_chain_routing.entity.VehicleStatus.AVAILABLE){
+            if(v.getStatus() != VehicleStatus.AVAILABLE){
                 continue;
             }
             if(v.getCapacity() < delivery.getWeight()){
@@ -63,6 +65,11 @@ public class DeliveryAssignmentServiceImpl implements DeliveryAssignmentService{
             throw new IllegalArgumentException("No suitable vehicle found for delivery "
             +deliveryId);
         }
+
+        delivery.setVehicle(bestVehicle);
+        delivery.setStatus(DeliveryStatus.ASSIGNED);
+        deliveryRepository.save(delivery);
+
         return new DeliveryAssignmentResponse(
                 delivery.getId(),
                 bestVehicle.getId(),

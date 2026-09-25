@@ -12,6 +12,10 @@ public class Delivery {
 
     private String deliveryAddress;
 
+    @ManyToOne
+    @JoinColumn(name = "vehicle_id")
+    private Vehicle vehicle;
+
     private Double weight;
 
     @Enumerated(EnumType.STRING)
@@ -25,6 +29,14 @@ public class Delivery {
     private Location destinationLocation;
 
     public Delivery() {
+    }
+
+    public Vehicle getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
     }
 
     public Long getId() {
