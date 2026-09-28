@@ -1,0 +1,243 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.app {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f6fa;
+}
+
+.sidebar {
+  width: 240px;
+  padding: 25px 20px;
+  background: #1f2937;
+  color: white;
+}
+
+.sidebar h2 {
+  margin-bottom: 35px;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebar button {
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: white;
+  text-align: left;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.sidebar button:hover {
+  background: #374151;
+}
+
+.main-content {
+  flex: 1;
+  padding: 30px;
+}
+
+.header {
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  margin-bottom: 8px;
+}
+
+.header p {
+  margin: 0;
+  color: #6b7280;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.card h3 {
+  margin-top: 0;
+  color: #6b7280;
+}
+
+.card p {
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+.welcome {
+  margin-top: 30px;
+  padding: 30px;
+  background: white;
+  border-radius: 10px;
+}
+
+.welcome p {
+  color: #6b7280;
+}
+.location-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.location-card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.location-card h3 {
+  margin-top: 0;
+}
+
+.location-card p {
+  color: #6b7280;
+}
+
+.add-location {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.add-location h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.add-location form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.add-location input {
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.add-location button {
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background: #1f2937;
+  color: white;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.add-location button:hover {
+  background: #374151;
+}
+.add-location select {
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #374151;
+}
+
+.delete-button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #dc2626;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.delete-button:hover {
+  background: #b91c1c;
+}
+.vehicle-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.vehicle-card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.vehicle-card h3 {
+  margin-top: 0;
+}
+
+.vehicle-card p {
+  color: #6b7280;
+  margin: 10px 0;
+}.add-vehicle {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.add-vehicle h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.add-vehicle form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.add-vehicle input,
+.add-vehicle select {
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: black;
+}
+
+.add-vehicle button {
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background:black;
+  color: white;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.add-vehicle button:hover {
+  background: #374151;
+}
