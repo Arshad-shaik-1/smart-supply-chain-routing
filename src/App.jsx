@@ -6,6 +6,7 @@ function App() {
 
   const [locations, setLocations] = useState([]);
   const [activePage, setActivePage] = useState("Dashboard");
+  const [deliveries, setDeliveries] = useState([]);
 
   const [vehicles, setVehicles] = useState([]);
 
@@ -18,6 +19,13 @@ function App() {
 const [capacity, setCapacity] = useState("");
 const [currentLocationId, setCurrentLocationId] = useState("");
 const [status, setStatus] = useState("");
+
+const [deliveryAddress, setDeliveryAddress] = useState("");
+const [weight, setWeight] = useState("");
+const [priority, setPriority] = useState("");
+const [deliveryStatus, setDeliveryStatus] = useState("PENDING");
+const [destinationLocationId, setDestinationLocationId] = useState("");
+const [vehicleId, setVehicleId] = useState("");
 
  const fetchVehicles = () => {
   fetch("http://localhost:8080/api/vehicles")
@@ -33,6 +41,20 @@ const [status, setStatus] = useState("");
       console.error("Error fetching vehicles:", error);
     });
 };
+
+const fetchDeliveries = () => {
+  fetch("http://localhost:8080/api/deliveries")
+    .then(response => response.json())
+    .then(data => {
+      setDeliveries(data);
+    })
+    .catch(error => {
+      console.error("Error fetching deliveries:", error);
+    });
+};
+
+
+
   const handleDeleteLocation = (id) => {
 
   fetch(`http://localhost:8080/api/locations/${id}`, {
@@ -64,12 +86,23 @@ const [status, setStatus] = useState("");
 
   useEffect(() => {
 
-  if (activePage === "Locations" || activePage === "Vehicles") {
-  fetchLocations();
-}
+  if (
+    activePage === "Locations" ||
+    activePage === "Vehicles" ||
+    activePage === "Deliveries"
+  ) {
+    fetchLocations();
+  }
 
-  if (activePage === "Vehicles") {
+  if (
+    activePage === "Vehicles" ||
+    activePage === "Deliveries"
+  ) {
     fetchVehicles();
+  }
+
+  if (activePage === "Deliveries") {
+    fetchDeliveries();
   }
 
 }, [activePage]);
@@ -175,6 +208,75 @@ const handleDeleteVehicle = (id) => {
     })
     .catch(error => {
       console.error("Error deleting vehicle:", error);
+    });
+};
+
+
+const handleAddDelivery = (event) => {
+
+  event.preventDefault();
+
+  const newDelivery = {
+    deliveryAddress: deliveryAddress,
+    weight: Number(weight),
+    priority: priority,
+    status: deliveryStatus,
+    destinationLocation: {
+      id: Number(destinationLocationId)
+    },
+    vehicle: vehicleId
+      ? { id: Number(vehicleId) }
+      : null
+  };
+
+  fetch("http://localhost:8080/api/deliveries", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(newDelivery)
+  })
+    .then(response => {
+
+      if (!response.ok) {
+        throw new Error("Failed to add delivery");
+      }
+
+      return response.json();
+    })
+    .then(data => {
+
+      console.log("Delivery added:", data);
+
+      setDeliveryAddress("");
+      setWeight("");
+      setPriority("");
+      setDeliveryStatus("PENDING");
+      setDestinationLocationId("");
+      setVehicleId("");
+
+      fetchDeliveries();
+    })
+    .catch(error => {
+      console.error("Error adding delivery:", error);
+    });
+};
+
+const handleDeleteDelivery = (id) => {
+
+  fetch(`http://localhost:8080/api/deliveries/${id}`, {
+    method: "DELETE"
+  })
+    .then(response => {
+
+      if (!response.ok) {
+        throw new Error("Failed to delete delivery");
+      }
+
+      fetchDeliveries();
+    })
+    .catch(error => {
+      console.error("Error deleting delivery:", error);
     });
 };
 
@@ -460,6 +562,163 @@ const handleDeleteVehicle = (id) => {
           </div>
 
         ))
+
+      )}
+
+    </div>
+
+  </section>
+)}
+
+{activePage === "Deliveries" && (
+  <section>
+
+    <header className="header">
+      <h1>Deliveries</h1>
+      <p>Manage supply chain deliveries</p>
+    </header>
+
+<div className="add-delivery">
+
+  <h2>Add Delivery</h2>
+
+  <form onSubmit={handleAddDelivery}>
+
+    <input
+      type="text"
+      placeholder="Delivery address"
+      value={deliveryAddress}
+      onChange={(event) => setDeliveryAddress(event.target.value)}
+      required
+    />
+
+    <input
+      type="number"
+      step="any"
+      placeholder="Weight"
+      value={weight}
+      onChange={(event) => setWeight(event.target.value)}
+      required
+    />
+
+    <select
+      value={priority}
+      onChange={(event) => setPriority(event.target.value)}
+      required
+    >
+      <option value="">Select priority</option>
+      <option value="LOW">Low</option>
+      <option value="MEDIUM">Medium</option>
+      <option value="HIGH">High</option>
+    </select>
+
+    <select
+      value={destinationLocationId}
+      onChange={(event) => setDestinationLocationId(event.target.value)}
+      required
+    >
+      <option value="">Select destination</option>
+
+      {locations.map(location => (
+        <option
+          key={location.id}
+          value={location.id}
+        >
+          {location.name}
+        </option>
+      ))}
+
+    </select>
+
+    <select
+      value={vehicleId}
+      onChange={(event) => setVehicleId(event.target.value)}
+    >
+      <option value="">No vehicle / Assign later</option>
+
+      {vehicles.map(vehicle => (
+        <option
+          key={vehicle.id}
+          value={vehicle.id}
+        >
+          {vehicle.vehicleNo}
+        </option>
+      ))}
+
+    </select>
+
+    <select
+      value={deliveryStatus}
+      onChange={(event) => setDeliveryStatus(event.target.value)}
+      required
+    >
+      <option value="PENDING">Pending</option>
+      <option value="ASSIGNED">Assigned</option>
+      <option value="IN_TRANSIT">In Transit</option>
+      <option value="DELIVERED">Delivered</option>
+      <option value="CANCELLED">Cancelled</option>
+    </select>
+
+    <button type="submit">
+      Add Delivery
+    </button>
+
+  </form>
+
+</div>
+
+    <div className="delivery-list">
+
+      {deliveries.length === 0 ? (
+        <p>No deliveries found.</p>
+      ) : (
+
+        deliveries.map(delivery => (
+
+  <div className="delivery-card" key={delivery.id}>
+
+    <h3>
+      Delivery #{delivery.id}
+    </h3>
+
+    <p>
+      Address: {delivery.deliveryAddress}
+    </p>
+
+    <p>
+      Weight: {delivery.weight}
+    </p>
+
+    <p>
+      Priority: {delivery.priority}
+    </p>
+
+    <p>
+      Status: {delivery.status}
+    </p>
+
+    <p>
+      Destination:{" "}
+      {delivery.destinationLocation
+        ? delivery.destinationLocation.name
+        : "Not assigned"}
+    </p>
+
+    <p>
+      Vehicle:{" "}
+      {delivery.vehicle
+        ? delivery.vehicle.vehicleNo
+        : "Not assigned"}
+    </p>
+    <button
+  className="delete-button"
+  onClick={() => handleDeleteDelivery(delivery.id)}
+>
+  Delete
+</button>
+  </div>
+
+))
 
       )}
 
