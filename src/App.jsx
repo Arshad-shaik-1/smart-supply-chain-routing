@@ -8,6 +8,16 @@ function App() {
   const [activePage, setActivePage] = useState("Dashboard");
   const [deliveries, setDeliveries] = useState([]);
 
+  const [sourceLocationId, setSourceLocationId] = useState("");
+// const [destinationLocationId, setDestinationLocationId] = useState("");
+const [routeResult, setRouteResult] = useState(null);
+const [routeError, setRouteError] = useState("");
+
+const [selectedRouteVehicleId, setSelectedRouteVehicleId] = useState("");
+const [selectedDeliveryIds, setSelectedDeliveryIds] = useState([]);
+const [multiRouteResult, setMultiRouteResult] = useState(null);
+const [multiRouteError, setMultiRouteError] = useState("");
+
   const [vehicles, setVehicles] = useState([]);
 
   const [name, setName] = useState("");
@@ -26,6 +36,8 @@ const [priority, setPriority] = useState("");
 const [deliveryStatus, setDeliveryStatus] = useState("PENDING");
 const [destinationLocationId, setDestinationLocationId] = useState("");
 const [vehicleId, setVehicleId] = useState("");
+
+
 
  const fetchVehicles = () => {
   fetch("http://localhost:8080/api/vehicles")
@@ -89,19 +101,24 @@ const fetchDeliveries = () => {
   if (
     activePage === "Locations" ||
     activePage === "Vehicles" ||
-    activePage === "Deliveries"
+    activePage === "Deliveries" ||
+    activePage === "Routes"
   ) {
     fetchLocations();
   }
 
   if (
     activePage === "Vehicles" ||
-    activePage === "Deliveries"
+    activePage === "Deliveries" ||
+    activePage === "Routes"
   ) {
     fetchVehicles();
   }
 
-  if (activePage === "Deliveries") {
+  if (
+    activePage === "Deliveries" ||
+    activePage === "Routes"
+  ) {
     fetchDeliveries();
   }
 
@@ -280,6 +297,84 @@ const handleDeleteDelivery = (id) => {
     });
 };
 
+const handleFindRoute = (event) => {
+  event.preventDefault();
+
+  setRouteResult(null);
+  setRouteError("");
+
+  fetch(
+    `http://localhost:8080/api/graph/shortest-path?source=${sourceLocationId}&destination=${destinationLocationId}`
+  )
+    .then(response => {
+      if (!response.ok) {
+        return response.json().then(errorData => {
+          throw new Error(errorData.error || "Failed to find route");
+        });
+      }
+
+      return response.json();
+    })
+    .then(data => {
+      setRouteResult(data);
+    })
+    .catch(error => {
+      setRouteError(error.message);
+    });
+};
+
+const handleCalculateMultiRoute = (event) => {
+  event.preventDefault();
+
+  setMultiRouteResult(null);
+  setMultiRouteError("");
+
+  const request = {
+    vehicleId: Number(selectedRouteVehicleId),
+    deliveryIds: selectedDeliveryIds.map(id => Number(id))
+  };
+
+  fetch("http://localhost:8080/api/routes/multi-delivery", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(request)
+  })
+    .then(response => {
+      if (!response.ok) {
+        return response.json().then(errorData => {
+          throw new Error(
+            errorData.error || "Failed to calculate multi-delivery route"
+          );
+        });
+      }
+
+      return response.json();
+    })
+    .then(data => {
+      setMultiRouteResult(data);
+    })
+    .catch(error => {
+      setMultiRouteError(error.message);
+    });
+};
+
+
+const handleDeliverySelection = (deliveryId) => {
+
+  setSelectedDeliveryIds(previousIds => {
+
+    if (previousIds.includes(deliveryId)) {
+      return previousIds.filter(id => id !== deliveryId);
+    }
+
+    return [...previousIds, deliveryId];
+
+  });
+
+};
+
   return (
     <div className="app">
 
@@ -312,6 +407,268 @@ const handleDeleteDelivery = (id) => {
         </nav>
 
       </aside>
+
+      {activePage === "Routes" && (
+        
+  <section>
+    <header className="header">
+      <h1>Route Calculator</h1>
+      <p>Find the shortest route between two locations</p>
+    </header>
+
+    <div className="route-form-card">
+
+      <h2>Calculate Shortest Route</h2>
+
+      <form onSubmit={handleFindRoute}>
+
+        <select
+          value={sourceLocationId}
+          onChange={(event) => setSourceLocationId(event.target.value)}
+          required
+        >
+          <option value="">Select source location</option>
+
+          {locations.map(location => (
+            <option
+              key={location.id}
+              value={location.id}
+            >
+              {location.name}
+            </option>
+          ))}
+
+        </select>
+
+        <select
+          value={destinationLocationId}
+          onChange={(event) => setDestinationLocationId(event.target.value)}
+          required
+        >
+          <option value="">Select destination location</option>
+
+          {locations.map(location => (
+            <option
+              key={location.id}
+              value={location.id}
+            >
+              {location.name}
+            </option>
+          ))}
+
+        </select>
+
+        <button type="submit">
+          Find Shortest Route
+        </button>
+
+      </form>
+
+    </div>
+
+    {routeError && (
+      <div className="route-error">
+        <p>{routeError}</p>
+      </div>
+    )}
+
+    {routeResult && (
+      <div className="route-result">
+
+        <h2>Route Result</h2>
+
+        <p>
+          <strong>Source:</strong>{" "}
+          {locations.find(
+            location => location.id === routeResult.source
+          )?.name}
+        </p>
+
+        <p>
+          <strong>Destination:</strong>{" "}
+          {locations.find(
+            location => location.id === routeResult.destination
+          )?.name}
+        </p>
+
+        <p>
+          <strong>Distance:</strong>{" "}
+          {routeResult.distance}
+        </p>
+
+        <p>
+          <strong>Path:</strong>{" "}
+          {routeResult.path.join(" → ")}
+        </p>
+
+      </div>
+    )}
+
+
+    <div className="multi-route-section">
+
+  <header className="header">
+    <h1>Multi-Delivery Route</h1>
+    <p>Calculate an optimized route for multiple deliveries</p>
+  </header>
+
+  <div className="multi-route-card">
+
+    <h2>Select Vehicle</h2>
+
+    <form onSubmit={handleCalculateMultiRoute}>
+
+      <select
+        value={selectedRouteVehicleId}
+        onChange={(event) =>
+          setSelectedRouteVehicleId(event.target.value)
+        }
+        required
+      >
+        <option value="">Select vehicle</option>
+
+        {vehicles.map(vehicle => (
+          <option
+            key={vehicle.id}
+            value={vehicle.id}
+          >
+            {vehicle.vehicleNo} - Capacity: {vehicle.capacity}
+          </option>
+        ))}
+
+      </select>
+
+      <h2>Select Deliveries</h2>
+
+      <div className="route-delivery-list">
+
+        {deliveries.length === 0 ? (
+          <p>No deliveries available.</p>
+        ) : (
+
+          deliveries.map(delivery => (
+
+            <label
+              key={delivery.id}
+              className="route-delivery-item"
+            >
+
+              <input
+                type="checkbox"
+                checked={selectedDeliveryIds.includes(delivery.id)}
+                onChange={() =>
+                  handleDeliverySelection(delivery.id)
+                }
+              />
+
+              <span>
+                Delivery #{delivery.id} —{" "}
+                {delivery.deliveryAddress}
+                {" | "}
+                Weight: {delivery.weight}
+                {" | "}
+                Priority: {delivery.priority}
+              </span>
+
+            </label>
+
+          ))
+
+        )}
+
+      </div>
+
+      <button type="submit">
+        Calculate Optimized Route
+      </button>
+
+    </form>
+
+  </div>
+
+  {multiRouteError && (
+    <div className="route-error">
+      <p>{multiRouteError}</p>
+    </div>
+  )}
+
+  {multiRouteResult && (
+    <div className="multi-route-result">
+
+      <h2>Optimized Route</h2>
+
+      <p>
+        <strong>Vehicle:</strong>{" "}
+        {vehicles.find(
+          vehicle => vehicle.id === multiRouteResult.vehicleId
+        )?.vehicleNo}
+      </p>
+
+      <p>
+        <strong>Total Distance:</strong>{" "}
+        {multiRouteResult.totalDistance}
+      </p>
+
+      <h3>Delivery Order</h3>
+
+      <ol>
+        {multiRouteResult.deliveryIds.map(deliveryId => {
+
+          const delivery = deliveries.find(
+            item => item.id === deliveryId
+          );
+
+          return (
+            <li key={deliveryId}>
+              Delivery #{deliveryId}
+              {" - "}
+              {delivery?.deliveryAddress}
+            </li>
+          );
+
+        })}
+      </ol>
+
+      <h3>Routes</h3>
+
+      {multiRouteResult.routes.map((route, index) => (
+
+        <div
+          className="individual-route"
+          key={index}
+        >
+
+          <p>
+            <strong>Route {index + 1}</strong>
+          </p>
+
+          <p>
+            From: {route.source}
+          </p>
+
+          <p>
+            To: {route.destination}
+          </p>
+
+          <p>
+            Distance: {route.distance}
+          </p>
+
+          <p>
+            Path: {route.path.join(" → ")}
+          </p>
+
+        </div>
+
+      ))}
+
+    </div>
+  )}
+
+</div>
+
+  </section>
+)}
 
       <main className="main-content">
 
@@ -715,7 +1072,7 @@ const handleDeleteDelivery = (id) => {
   onClick={() => handleDeleteDelivery(delivery.id)}
 >
   Delete
-</button>
+</button>git
   </div>
 
 ))
