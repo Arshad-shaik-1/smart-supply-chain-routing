@@ -4,13 +4,11 @@ import com.arshad.supply_chain_routing.dto.RouteResponse;
 import com.arshad.supply_chain_routing.graph.Graph;
 import com.arshad.supply_chain_routing.graph.GraphBuilder;
 import com.arshad.supply_chain_routing.graph.DijkstraService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/graph")
+@CrossOrigin(origins = "http://localhost:5173")
 public class GraphController {
     private final GraphBuilder graphBuilder;
     private final DijkstraService dijkstraService;
