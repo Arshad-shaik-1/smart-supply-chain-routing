@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-
+import MapView from "./MapView";
 
 function App() {
 
@@ -326,6 +326,10 @@ const handleFindRoute = (event) => {
 const handleCalculateMultiRoute = (event) => {
   event.preventDefault();
 
+  // Clear the previous single route
+    setRouteResult(null);
+    setRouteError("");
+
   setMultiRouteResult(null);
   setMultiRouteError("");
 
@@ -472,37 +476,45 @@ const handleDeliverySelection = (deliveryId) => {
       </div>
     )}
 
-    {routeResult && (
-      <div className="route-result">
+
+
+{routeResult && (
+    <div className="route-result">
 
         <h2>Route Result</h2>
 
         <p>
-          <strong>Source:</strong>{" "}
-          {locations.find(
-            location => location.id === routeResult.source
-          )?.name}
+            <strong>Source:</strong>{" "}
+            {locations.find(
+                location => location.id === routeResult.source
+            )?.name}
         </p>
 
         <p>
-          <strong>Destination:</strong>{" "}
-          {locations.find(
-            location => location.id === routeResult.destination
-          )?.name}
+            <strong>Destination:</strong>{" "}
+            {locations.find(
+                location => location.id === routeResult.destination
+            )?.name}
         </p>
 
         <p>
-          <strong>Distance:</strong>{" "}
-          {routeResult.distance}
+            <strong>Distance:</strong>{" "}
+            {routeResult.distance}
         </p>
 
         <p>
-          <strong>Path:</strong>{" "}
-          {routeResult.path.join(" → ")}
+            <strong>Path:</strong>{" "}
+            {routeResult.path.join(" → ")}
         </p>
 
-      </div>
-    )}
+    </div>
+)}
+
+<MapView
+    locations={locations}
+    routeResult={routeResult}
+    multiRouteResult={multiRouteResult}
+/>
 
 
     <div className="multi-route-section">
