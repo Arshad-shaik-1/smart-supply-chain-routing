@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import MapView from "./MapView";
-
+import Login from "./Login";
 function App() {
 
     const [locations, setLocations] = useState([]);
@@ -63,7 +63,9 @@ function App() {
 
     const fetchLocations = () => {
 
-        fetch("http://localhost:8080/api/locations")
+        authFetch("http://localhost:8080/api/locations")
+
+        
 
             .then(response => response.json())
 
@@ -82,7 +84,7 @@ function App() {
 
     const fetchVehicles = () => {
 
-        fetch("http://localhost:8080/api/vehicles")
+        authFetch("http://localhost:8080/api/vehicles")
 
             .then(response => {
 
@@ -109,7 +111,7 @@ function App() {
 
     const fetchDeliveries = () => {
 
-        fetch("http://localhost:8080/api/deliveries")
+        authFetch("http://localhost:8080/api/deliveries")
 
             .then(response => response.json())
 
@@ -666,6 +668,54 @@ function App() {
         });
     };
 
+    const [user, setUser] = useState(() => {
+    const token = localStorage.getItem("token");
+    const username = localStorage.getItem("username");
+    const role = localStorage.getItem("role");
+
+    if (token && username && role) {
+        return {
+            token,
+            username,
+            role
+        };
+    }
+
+    return null;
+});
+
+if (!user) {
+        return (
+            <Login
+                onLogin={(loginData) => {
+                    setUser(loginData);
+                }}
+            />
+        );
+    }
+
+    const authFetch = (url, options = {}) => {
+    const token = localStorage.getItem("token");
+
+    return fetch(url, {
+        ...options,
+        headers: {
+            ...(options.headers || {}),
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+        }
+    });
+};
+
+
+const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
+    localStorage.removeItem("role");
+
+    setUser(null);
+};
+
     // =====================================================
     // UI
     // =====================================================
@@ -681,6 +731,7 @@ function App() {
                 <h2>Supply Chain</h2>
 
                 <nav>
+                    
 
                     <button
                         onClick={() => setActivePage("Dashboard")}
@@ -711,6 +762,9 @@ function App() {
                     >
                         Routes
                     </button>
+                    <button onClick={handleLogout}>
+    Logout
+</button>
 
                 </nav>
 
@@ -1919,6 +1973,8 @@ function App() {
         </div>
 
     );
+
+    
 }
 
 export default App;
