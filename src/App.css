@@ -305,3 +305,162 @@ body {
 .add-delivery button:hover {
   background: #374151;
 }
+
+/* ============================= */
+/* Route Calculator */
+/* ============================= */
+
+.route-form-card {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  max-width: 900px;
+  margin-bottom: 30px;
+}
+
+.route-form-card form {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.route-form-card select {
+  flex: 1;
+  min-width: 250px;
+}
+
+.route-result {
+  background: white;
+  max-width: 900px;
+  margin: 25px auto;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.route-result h2 {
+  margin-bottom: 20px;
+}
+
+.route-result p {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.route-error {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+
+/* ============================= */
+/* Multi Delivery Route */
+/* ============================= */
+
+.multi-route-section {
+  margin-top: 50px;
+}
+
+.multi-route-card {
+  background: white;
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.multi-route-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.multi-route-card select {
+  width: 100%;
+}
+
+
+/* Delivery selection */
+
+.route-delivery-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.route-delivery-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: #f5f7fa;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.route-delivery-item:hover {
+  background: #e9edf3;
+}
+
+.route-delivery-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+
+/* Multi route result */
+
+.multi-route-result {
+  background: white;
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.multi-route-result > h2 {
+  margin-bottom: 20px;
+}
+
+.multi-route-result > p {
+  font-size: 17px;
+  margin: 10px 0;
+}
+
+
+/* Delivery order */
+
+.multi-route-result ol {
+  margin: 15px 0 30px;
+  padding-left: 25px;
+}
+
+.multi-route-result li {
+  padding: 8px 0;
+  font-size: 16px;
+}
+
+
+/* Individual routes */
+
+.individual-route {
+  background: #f5f7fa;
+  padding: 18px;
+  margin: 15px 0;
+  border-radius: 10px;
+  border-left: 4px solid #1f2937;
+}
+
+.individual-route p {
+  margin: 7px 0;
+}
